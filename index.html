@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign XRP Transaction</title>
+</head>
+<body>
+    <h1>Sign XRP Transaction from Multi-Signature Wallet</h1>
+    <form id="transactionForm">
+        <label for="seedPhrase">Seed Phrase:</label><br>
+        <input type="text" id="seedPhrase" name="seedPhrase" required><br><br>
+        <label for="transactionJSON">Transaction JSON:</label><br>
+        <textarea id="transactionJSON" name="transactionJSON" required></textarea><br><br>
+        <button type="button" onclick="signTransaction()">Sign Transaction</button>
+    </form>
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ripple-lib/dist/ripple-lib.min.js"></script>
+    <script>
+        async function signTransaction() {
+            const seedPhrase = document.getElementById('seedPhrase').value;
+            const transactionJSON = JSON.parse(document.getElementById('transactionJSON').value);
+
+            // Derive the keypair from the seed phrase
+            const keypair = ripple.ECPair.fromSeed(seedPhrase);
+
+            // Create a transaction object
+            const transaction = ripple.tx.prepare(transactionJSON, { 
+                network: 'testnet'
+            });
+
+            // Sign the transaction
+            const signedTransaction = ripple.tx.sign(transaction, keypair);
+
+            // Display the result
+            document.getElementById('result').innerText = 'Signed Transaction: ' + signedTransaction;
+        }
+    </script>
+</body>
+</html>
